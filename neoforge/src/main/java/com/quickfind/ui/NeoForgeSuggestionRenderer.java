@@ -1,15 +1,15 @@
 package com.quickfind.ui;
 
 import com.quickfind.QuickFindCommon;
-import net.neoforged.neoforge.client.event.ScreenEvent;
-import net.neoforged.neoforge.common.NeoForge;
+import net.minecraftforge.client.event.ScreenEvent;
+import net.minecraftforge.common.MinecraftForge;
 
 public final class NeoForgeSuggestionRenderer {
     private NeoForgeSuggestionRenderer() {
     }
 
     public static void register() {
-        NeoForge.EVENT_BUS.addListener(ScreenEvent.Render.Post.class, NeoForgeSuggestionRenderer::onRenderPost);
+        MinecraftForge.EVENT_BUS.addListener(NeoForgeSuggestionRenderer::onRenderPost);
     }
 
     private static void onRenderPost(ScreenEvent.Render.Post event) {

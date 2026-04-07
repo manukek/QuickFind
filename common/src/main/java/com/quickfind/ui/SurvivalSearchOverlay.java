@@ -104,7 +104,7 @@ public final class SurvivalSearchOverlay {
 
         screen.setFocused(this.searchField);
         this.searchField.setFocused(true);
-        this.searchField.moveCursorToEnd(false);
+        this.searchField.moveCursorToEnd();
     }
 
     private static boolean matches(ItemStack stack, String text, SearchQuery searchQuery) {

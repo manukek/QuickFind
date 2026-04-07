@@ -1,6 +1,6 @@
 package com.quickfind.search;
 
-import net.neoforged.fml.ModList;
+import net.minecraftforge.fml.ModList;
 
 import java.util.List;
 
