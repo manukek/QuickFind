@@ -1,4 +1,5 @@
 plugins {
+    id 'fabric-loom'
     id 'java-library'
 }
 
@@ -9,6 +10,11 @@ base {
 java {
     toolchain.languageVersion = JavaLanguageVersion.of(21)
     withSourcesJar()
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
+    mappings loom.officialMojangMappings()
 }
 
 tasks.withType(JavaCompile).configureEach {
