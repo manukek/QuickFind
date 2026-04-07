@@ -11,9 +11,16 @@ public final class FabricSuggestionRenderer {
         ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) ->
                 ScreenEvents.afterRender(screen).register((currentScreen, guiGraphics, mouseX, mouseY, tickDelta) -> {
                     ModSuggestionWidget widget = QuickFindCommon.getModSuggestionWidget();
-                    if (widget != null) {
-                        widget.render(guiGraphics, mouseX, mouseY);
+                    if (widget == null) {
+                        return;
                     }
+
+                    if (!widget.isVisibleOn(currentScreen)) {
+                        QuickFindCommon.setModSuggestionWidget(null);
+                        return;
+                    }
+
+                    widget.render(guiGraphics, mouseX, mouseY);
                 }));
     }
 }

@@ -6,7 +6,9 @@ import com.quickfind.search.FabricModPlatform;
 import com.quickfind.search.SearchMatcher;
 import com.quickfind.search.SearchQuery;
 import com.quickfind.ui.ModSuggestionWidget;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.tags.TagKey;
@@ -51,6 +53,7 @@ public abstract class CreativeSearchMixin {
         }
 
         String text = this.searchBox.getValue();
+        QuickFindCommon.setLastQuery(text);
         SearchQuery searchQuery = SearchQuery.parse(text);
         this.quickfind$updateSuggestions(searchQuery);
         if (text.trim().isEmpty() || text.startsWith("#")) {
@@ -72,9 +75,24 @@ public abstract class CreativeSearchMixin {
         ci.cancel();
     }
 
+    @Inject(method = "init", at = @At("TAIL"))
+    private void quickfind$init(CallbackInfo ci) {
+        this.quickfind$restoreLastQuery();
+    }
+
+    @Inject(method = "selectTab", at = @At("TAIL"))
+    private void quickfind$selectTab(CreativeModeTab creativeModeTab, CallbackInfo ci) {
+        this.quickfind$restoreLastQuery();
+    }
+
     @Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
     private void quickfind$keyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
         ModSuggestionWidget widget = QuickFindCommon.getModSuggestionWidget();
+        if (widget != null && !widget.isVisibleOn((Screen) (Object) this)) {
+            QuickFindCommon.setModSuggestionWidget(null);
+            return;
+        }
+
         if (widget != null && widget.keyPressed(keyCode)) {
             cir.setReturnValue(true);
         }
@@ -83,6 +101,11 @@ public abstract class CreativeSearchMixin {
     @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
     private void quickfind$mouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
         ModSuggestionWidget widget = QuickFindCommon.getModSuggestionWidget();
+        if (widget != null && !widget.isVisibleOn((Screen) (Object) this)) {
+            QuickFindCommon.setModSuggestionWidget(null);
+            return;
+        }
+
         if (widget != null && widget.mouseClicked(mouseX, mouseY, button)) {
             cir.setReturnValue(true);
         }
@@ -122,12 +145,35 @@ public abstract class CreativeSearchMixin {
             return;
         }
 
+        Screen screen = (Screen) (Object) this;
+        int dropdownWidth = Math.max(this.searchBox.getWidth(), suggestions.stream()
+                .mapToInt(modId -> Minecraft.getInstance().font.width(modId) + 8)
+                .max()
+                .orElse(this.searchBox.getWidth()));
+        int dropdownX = this.searchBox.getX() + this.searchBox.getWidth() + 4;
+        if (dropdownX + dropdownWidth > screen.width - 4) {
+            dropdownX = Math.max(4, this.searchBox.getX() - dropdownWidth - 4);
+        }
+
         QuickFindCommon.setModSuggestionWidget(new ModSuggestionWidget(
                 suggestions,
-                this.searchBox.getX(),
-                this.searchBox.getY() + this.searchBox.getHeight() + 2,
-                this.searchBox.getWidth(),
+                screen,
+                this.searchBox,
+                dropdownX,
+                this.searchBox.getY(),
+                dropdownWidth,
                 modId -> this.searchBox.setValue("@" + modId + ":")
         ));
+    }
+
+    private void quickfind$restoreLastQuery() {
+        if (selectedTab.getType() != CreativeModeTab.Type.SEARCH || this.searchBox == null || !this.searchBox.getValue().isEmpty()) {
+            return;
+        }
+
+        String lastQuery = QuickFindCommon.getLastQuery();
+        if (!lastQuery.isEmpty()) {
+            this.searchBox.setValue(lastQuery);
+        }
     }
 }

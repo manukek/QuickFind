@@ -2,6 +2,8 @@ package com.quickfind.ui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.Screen;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,21 +18,32 @@ public final class ModSuggestionWidget {
     public int x;
     public int y;
     public int width;
+    private final Screen owner;
+    private final EditBox anchor;
     private final Consumer<String> onSelect;
 
-    public ModSuggestionWidget(List<String> suggestions, int x, int y, int width, Consumer<String> onSelect) {
+    public ModSuggestionWidget(List<String> suggestions, Screen owner, EditBox anchor, int x, int y, int width, Consumer<String> onSelect) {
         this.suggestions = new ArrayList<>(suggestions);
         this.selectedIndex = this.suggestions.isEmpty() ? -1 : 0;
         this.x = x;
         this.y = y;
         this.width = width;
+        this.owner = Objects.requireNonNull(owner, "owner");
+        this.anchor = Objects.requireNonNull(anchor, "anchor");
         this.onSelect = Objects.requireNonNull(onSelect, "onSelect");
+    }
+
+    public boolean isVisibleOn(Screen screen) {
+        return !this.suggestions.isEmpty() && this.owner == screen && this.anchor.isVisible() && this.anchor.isFocused();
     }
 
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         if (this.suggestions.isEmpty()) {
             return;
         }
+
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(0.0F, 0.0F, 400.0F);
 
         int height = this.getHeight();
         guiGraphics.fill(this.x, this.y, this.x + this.width, this.y + height, 0xE0101010);
@@ -43,6 +56,8 @@ public final class ModSuggestionWidget {
             }
             guiGraphics.drawString(Minecraft.getInstance().font, this.suggestions.get(i), this.x + 4, rowTop + 2, 0xFFFFFF);
         }
+
+        guiGraphics.pose().popPose();
     }
 
     public boolean keyPressed(int key) {
