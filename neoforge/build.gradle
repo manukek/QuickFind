@@ -1,56 +1,47 @@
 plugins {
-    id 'com.gradleup.shadow'
+    id 'net.neoforged.moddev'
 }
 
-architectury {
-    platformSetupLoomIde()
-    neoForge()
+base {
+    archivesName = "${rootProject.archives_name}-neoforge"
 }
 
-configurations {
-    common {
-        canBeResolved = true
-        canBeConsumed = false
+neoForge {
+    version = rootProject.neoforge_version
+    runs {
+        client {
+            client()
+        }
     }
-    compileClasspath.extendsFrom common
-    runtimeClasspath.extendsFrom common
-    developmentNeoForge.extendsFrom common
-
-    // Files in this configuration will be bundled into your mod using the Shadow plugin.
-    // Don't use the `shadow` configuration from the plugin itself as it's meant for excluding files.
-    shadowBundle {
-        canBeResolved = true
-        canBeConsumed = false
-    }
-}
-
-repositories {
-    maven {
-        name = 'NeoForged'
-        url = 'https://maven.neoforged.net/releases'
+    mods {
+        quickfind {
+            sourceSet sourceSets.main
+        }
     }
 }
 
 dependencies {
-    neoForge "net.neoforged:neoforge:$rootProject.neoforge_version"
-
-    common(project(path: ':common', configuration: 'namedElements')) { transitive = false }
-    shadowBundle project(path: ':common', configuration: 'transformProductionNeoForge')
+    implementation project(':common')
 }
 
 processResources {
     inputs.property 'version', project.version
 
     filesMatching('META-INF/neoforge.mods.toml') {
-        expand version: inputs.properties.version
+        expand version: project.version
     }
 }
 
-shadowJar {
-    configurations = [project.configurations.shadowBundle]
-    archiveClassifier = 'dev-shadow'
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    withSourcesJar()
 }
 
-remapJar {
-    inputFile.set shadowJar.archiveFile
+tasks.withType(JavaCompile).configureEach {
+    options.release = 21
+}
+
+tasks.named('jar', Jar).configure {
+    dependsOn project(':common').tasks.named('classes')
+    from(project(':common').sourceSets.main.output)
 }

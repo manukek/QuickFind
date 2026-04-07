@@ -1,12 +1,10 @@
 {
   "required": true,
-  "package": "com.manukq.mixin",
+  "package": "com.quickfind.mixin",
   "compatibilityLevel": "JAVA_21",
   "minVersion": "0.8",
-  "client": [
-  ],
-  "mixins": [
-  ],
+  "client": [],
+  "mixins": [],
   "injectors": {
     "defaultRequire": 1
   }
