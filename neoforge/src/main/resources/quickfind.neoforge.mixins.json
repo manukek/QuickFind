@@ -3,7 +3,10 @@
   "package": "com.quickfind.mixin",
   "compatibilityLevel": "JAVA_21",
   "minVersion": "0.8",
-  "client": [],
+  "client": [
+    "AbstractContainerScreenAccessor",
+    "CreativeSearchMixin"
+  ],
   "mixins": [],
   "injectors": {
     "defaultRequire": 1
