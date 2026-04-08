@@ -3,8 +3,21 @@
   "id": "quickfind",
   "version": "${version}",
   "name": "QuickFind",
-  "description": "Lightweight vanilla inventory search improvements. [Modrinth](https://modrinth.com/project/quickfind) | [GitHub](https://github.com/manukek/quickfind) | [Issues](https://github.com/manukek/quickfind/issues)",
+  "description": "Lightweight vanilla inventory search improvements.",
+  "icon": "assets/quickfind/icon.png",
   "environment": "client",
+  "contact": {
+    "homepage": "https://modrinth.com/project/quickfind",
+    "sources": "https://github.com/manukek/quickfind",
+    "issues": "https://github.com/manukek/quickfind/issues"
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.modrinth": "https://modrinth.com/project/quickfind"
+      }
+    }
+  },
   "entrypoints": {
     "client": [
       "com.quickfind.QuickFindFabric"
