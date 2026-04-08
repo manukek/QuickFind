@@ -3,7 +3,7 @@
   "id": "quickfind",
   "version": "${version}",
   "name": "QuickFind",
-  "description": "Lightweight vanilla inventory search improvements.",
+  "description": "Lightweight vanilla inventory search improvements. [Modrinth](https://modrinth.com/project/quickfind) | [GitHub](https://github.com/manukek/quickfind) | [Issues](https://github.com/manukek/quickfind/issues)",
   "environment": "client",
   "entrypoints": {
     "client": [
