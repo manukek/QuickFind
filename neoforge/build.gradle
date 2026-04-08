@@ -21,8 +21,12 @@ neoForge {
     }
 }
 
+neoFormRuntime {
+    version = "1.0.42"
+}
+
 dependencies {
-    implementation project(path: ':common', configuration: 'namedElements')
+    implementation project(':common')
 }
 
 processResources {
@@ -34,12 +38,12 @@ processResources {
 }
 
 java {
-    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    toolchain.languageVersion = JavaLanguageVersion.of(25)
     withSourcesJar()
 }
 
 tasks.withType(JavaCompile).configureEach {
-    options.release = 21
+    options.release = 25
 }
 
 tasks.named('jar', Jar).configure {

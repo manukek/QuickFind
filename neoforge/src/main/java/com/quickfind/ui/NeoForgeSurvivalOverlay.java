@@ -30,7 +30,7 @@ public final class NeoForgeSurvivalOverlay {
     private static void onRenderPost(ScreenEvent.Render.Post event) {
         SurvivalSearchOverlay overlay = QuickFindCommon.getSurvivalSearchOverlay();
         if (overlay.isVisibleOn(event.getScreen())) {
-            overlay.render(event.getGuiGraphics());
+            overlay.render((Object) event.getGuiGraphics());
         }
     }
 

@@ -80,6 +80,37 @@ public final class SurvivalSearchOverlay {
         }
     }
 
+    public void render(Object guiGraphics) {
+        if (!this.visible || this.searchField == null || this.searchField.getValue().isBlank()) {
+            return;
+        }
+
+        if (!(this.screen instanceof AbstractContainerScreen<?> containerScreen)) {
+            return;
+        }
+
+        String text = this.searchField.getValue();
+        SearchQuery searchQuery = SearchQuery.parse(text);
+        int imageWidth = getFieldValue(this.screen, "imageWidth", DEFAULT_IMAGE_WIDTH);
+        int imageHeight = getFieldValue(this.screen, "imageHeight", DEFAULT_IMAGE_HEIGHT);
+        int leftPos = getFieldValue(this.screen, "leftPos", (this.screen.width - imageWidth) / 2);
+        int topPos = getFieldValue(this.screen, "topPos", (this.screen.height - imageHeight) / 2);
+
+        for (Slot slot : containerScreen.getMenu().slots) {
+            if (!slot.hasItem()) {
+                continue;
+            }
+
+            int x = leftPos + slot.x;
+            int y = topPos + slot.y;
+            if (matches(slot.getItem(), text, searchQuery)) {
+                invoke(guiGraphics, "fill", new Class<?>[]{int.class, int.class, int.class, int.class, int.class}, x, y, x + 16, y + 16, 0x40FFFFFF);
+            } else {
+                invoke(guiGraphics, "fill", new Class<?>[]{int.class, int.class, int.class, int.class, int.class}, x, y, x + 16, y + 16, 0xA0000000);
+            }
+        }
+    }
+
     public boolean keyPressed(int key) {
         return this.visible && this.searchField != null && this.searchField.isFocused() && this.searchField.keyPressed(new KeyEvent(key, 0, 0));
     }
@@ -138,5 +169,13 @@ public final class SurvivalSearchOverlay {
             }
         }
         return fallback;
+    }
+
+    private static void invoke(Object target, String methodName, Class<?>[] parameterTypes, Object... args) {
+        try {
+            target.getClass().getMethod(methodName, parameterTypes).invoke(target, args);
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
