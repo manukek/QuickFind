@@ -23,6 +23,6 @@ public final class NeoForgeSuggestionRenderer {
             return;
         }
 
-        widget.render(event.getGuiGraphics(), event.getMouseX(), event.getMouseY());
+        widget.render((Object) event.getGuiGraphics(), event.getMouseX(), event.getMouseY());
     }
 }

@@ -61,6 +61,30 @@ public final class ModSuggestionWidget {
         }
     }
 
+    public void render(Object guiGraphics, int mouseX, int mouseY) {
+        if (this.suggestions.isEmpty()) {
+            return;
+        }
+
+        int height = this.getHeight();
+        invoke(guiGraphics, "fill", new Class<?>[]{int.class, int.class, int.class, int.class, int.class}, this.x, this.y, this.x + this.width, this.y + height, 0xE0101010);
+
+        int hoveredIndex = this.getSuggestionIndex(mouseX, mouseY);
+        for (int i = 0; i < this.suggestions.size(); i++) {
+            int rowTop = this.y + PADDING + i * ROW_HEIGHT;
+            if (i == this.selectedIndex || i == hoveredIndex) {
+                invoke(guiGraphics, "fill", new Class<?>[]{int.class, int.class, int.class, int.class, int.class}, this.x + 1, rowTop, this.x + this.width - 1, rowTop + ROW_HEIGHT, 0x80406080);
+            }
+        }
+
+        invoke(guiGraphics, "nextStratum", new Class<?>[0]);
+
+        for (int i = 0; i < this.suggestions.size(); i++) {
+            int rowTop = this.y + PADDING + i * ROW_HEIGHT;
+            invoke(guiGraphics, "drawString", new Class<?>[]{net.minecraft.client.gui.Font.class, String.class, int.class, int.class, int.class}, Minecraft.getInstance().font, this.suggestions.get(i), this.x + 4, rowTop + 2, 0xFFFFFFFF);
+        }
+    }
+
     public boolean keyPressed(int key) {
         if (this.suggestions.isEmpty()) {
             return false;
@@ -119,6 +143,14 @@ public final class ModSuggestionWidget {
 
     private int getHeight() {
         return PADDING * 2 + this.suggestions.size() * ROW_HEIGHT;
+    }
+
+    private static void invoke(Object target, String methodName, Class<?>[] parameterTypes, Object... args) {
+        try {
+            target.getClass().getMethod(methodName, parameterTypes).invoke(target, args);
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void select(int index) {
