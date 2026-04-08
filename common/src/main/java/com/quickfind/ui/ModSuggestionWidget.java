@@ -42,8 +42,7 @@ public final class ModSuggestionWidget {
             return;
         }
 
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate(0.0F, 0.0F, 400.0F);
+        guiGraphics.nextStratum();
 
         int height = this.getHeight();
         guiGraphics.fill(this.x, this.y, this.x + this.width, this.y + height, 0xE0101010);
@@ -54,10 +53,8 @@ public final class ModSuggestionWidget {
             if (i == this.selectedIndex || i == hoveredIndex) {
                 guiGraphics.fill(this.x + 1, rowTop, this.x + this.width - 1, rowTop + ROW_HEIGHT, 0x80406080);
             }
-            guiGraphics.drawString(Minecraft.getInstance().font, this.suggestions.get(i), this.x + 4, rowTop + 2, 0xFFFFFF);
+            guiGraphics.drawString(Minecraft.getInstance().font, this.suggestions.get(i), this.x + 4, rowTop + 2, 0xFFFFFFFF);
         }
-
-        guiGraphics.pose().popPose();
     }
 
     public boolean keyPressed(int key) {

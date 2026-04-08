@@ -72,7 +72,7 @@ public final class SurvivalSearchOverlay {
             int x = leftPos + slot.x;
             int y = topPos + slot.y;
             if (matches(slot.getItem(), text, searchQuery)) {
-                AbstractContainerScreen.renderSlotHighlight(guiGraphics, x, y, 0x80FFFFFF);
+                guiGraphics.fill(x, y, x + 16, y + 16, 0x40FFFFFF);
             } else {
                 guiGraphics.fill(x, y, x + 16, y + 16, 0xA0000000);
             }
@@ -104,7 +104,7 @@ public final class SurvivalSearchOverlay {
 
         screen.setFocused(this.searchField);
         this.searchField.setFocused(true);
-        this.searchField.moveCursorToEnd();
+        this.searchField.moveCursorToEnd(false);
     }
 
     private static boolean matches(ItemStack stack, String text, SearchQuery searchQuery) {
