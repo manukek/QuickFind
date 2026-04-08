@@ -13,7 +13,6 @@ A lightweight inventory search improvements mod for Minecraft.
 - Fuzzy search by word initials — `r wo` finds Red Wool
 - Mod filter — `@[modname]:` shows all mod items. Example @create:
 - Mod suggestion dropdown when typing `@`
-- Works in creative and survival inventory
 
 ---
 
