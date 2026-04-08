@@ -7,6 +7,8 @@ import com.quickfind.search.SearchMatcher;
 import com.quickfind.search.SearchQuery;
 import com.quickfind.ui.ModSuggestionWidget;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
@@ -86,27 +88,27 @@ public abstract class CreativeSearchMixin {
     }
 
     @Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
-    private void quickfind$keyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
+    private void quickfind$keyPressed(KeyEvent event, CallbackInfoReturnable<Boolean> cir) {
         ModSuggestionWidget widget = QuickFindCommon.getModSuggestionWidget();
         if (widget != null && !widget.isVisibleOn((Screen) (Object) this)) {
             QuickFindCommon.setModSuggestionWidget(null);
             return;
         }
 
-        if (widget != null && widget.keyPressed(keyCode)) {
+        if (widget != null && widget.keyPressed(event.key())) {
             cir.setReturnValue(true);
         }
     }
 
     @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
-    private void quickfind$mouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
+    private void quickfind$mouseClicked(MouseButtonEvent event, boolean doubleClick, CallbackInfoReturnable<Boolean> cir) {
         ModSuggestionWidget widget = QuickFindCommon.getModSuggestionWidget();
         if (widget != null && !widget.isVisibleOn((Screen) (Object) this)) {
             QuickFindCommon.setModSuggestionWidget(null);
             return;
         }
 
-        if (widget != null && widget.mouseClicked(mouseX, mouseY, button)) {
+        if (widget != null && widget.mouseClicked(event.x(), event.y(), event.button())) {
             cir.setReturnValue(true);
         }
     }

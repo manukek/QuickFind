@@ -1,13 +1,13 @@
 plugins {
-    id 'net.neoforged.moddev.legacyforge'
+    id 'net.neoforged.moddev'
 }
 
 base {
     archivesName = "${rootProject.archives_name}-neoforge"
 }
 
-legacyForge {
-    version = "${rootProject.minecraft_version}-${rootProject.forge_version}"
+neoForge {
+    version = rootProject.neoforge_version
     runs {
         client {
             client()
@@ -16,24 +16,23 @@ legacyForge {
     mods {
         quickfind {
             sourceSet sourceSets.main
+            sourceSet project(':common').sourceSets.main
         }
     }
 }
 
-dependencies {
-    implementation project(path: ':common', configuration: 'namedElements')
-    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+neoFormRuntime {
+    version = "1.0.42"
 }
 
-mixin {
-    add sourceSets.main, "quickfind.refmap.json"
-    config "quickfind.neoforge.mixins.json"
+dependencies {
+    implementation project(path: ':common', configuration: 'namedElements')
 }
 
 processResources {
     inputs.property 'version', project.version
 
-    filesMatching('META-INF/mods.toml') {
+    filesMatching('META-INF/neoforge.mods.toml') {
         expand version: project.version
     }
 }
@@ -44,11 +43,10 @@ java {
 }
 
 tasks.withType(JavaCompile).configureEach {
-    options.release = 17
+    options.release = 21
 }
 
 tasks.named('jar', Jar).configure {
     dependsOn project(':common').tasks.named('classes')
-    manifest.attributes(["MixinConfigs": "quickfind.neoforge.mixins.json"])
     from(project(':common').sourceSets.main.output)
 }

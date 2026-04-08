@@ -1,5 +1,5 @@
 modLoader = "javafml"
-loaderVersion = "[47,)"
+loaderVersion = "[4,)"
 license = "All Rights Reserved"
 
 [[mods]]
@@ -12,15 +12,18 @@ Lightweight vanilla inventory search improvements.
 '''
 
 [[dependencies.quickfind]]
-modId = "forge"
-mandatory = true
-versionRange = "[47.4.18,)"
+modId = "neoforge"
+type = "required"
+versionRange = "[21.10.64,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.quickfind]]
 modId = "minecraft"
-mandatory = true
-versionRange = "[1.20.1,1.21)"
+type = "required"
+versionRange = "[1.21.10,1.21.11)"
 ordering = "NONE"
 side = "BOTH"
+
+[[mixins]]
+config = "quickfind.neoforge.mixins.json"

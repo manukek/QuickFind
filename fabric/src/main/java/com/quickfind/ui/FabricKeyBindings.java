@@ -10,7 +10,7 @@ import org.lwjgl.glfw.GLFW;
 
 public final class FabricKeyBindings {
     private static final KeyMapping FOCUS_SEARCH = KeyBindingHelper.registerKeyBinding(
-            new KeyMapping("key.quickfind.focus_search", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_F, KeyMapping.CATEGORY_INVENTORY)
+            new KeyMapping("key.quickfind.focus_search", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_F, KeyMapping.Category.INVENTORY)
     );
 
     private FabricKeyBindings() {
