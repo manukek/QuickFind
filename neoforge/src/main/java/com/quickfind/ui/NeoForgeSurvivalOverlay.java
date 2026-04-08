@@ -2,17 +2,17 @@ package com.quickfind.ui;
 
 import com.quickfind.QuickFindCommon;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
-import net.minecraftforge.client.event.ScreenEvent;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.client.event.ScreenEvent;
+import net.neoforged.neoforge.common.NeoForge;
 
 public final class NeoForgeSurvivalOverlay {
     private NeoForgeSurvivalOverlay() {
     }
 
     public static void register() {
-        MinecraftForge.EVENT_BUS.addListener(NeoForgeSurvivalOverlay::onInitPost);
-        MinecraftForge.EVENT_BUS.addListener(NeoForgeSurvivalOverlay::onRenderPost);
-        MinecraftForge.EVENT_BUS.addListener(NeoForgeSurvivalOverlay::onClosing);
+        NeoForge.EVENT_BUS.addListener(NeoForgeSurvivalOverlay::onInitPost);
+        NeoForge.EVENT_BUS.addListener(NeoForgeSurvivalOverlay::onRenderPost);
+        NeoForge.EVENT_BUS.addListener(NeoForgeSurvivalOverlay::onClosing);
     }
 
     private static void onInitPost(ScreenEvent.Init.Post event) {
