@@ -28,7 +28,7 @@ java {
 }
 
 tasks.withType(JavaCompile).configureEach {
-    options.release = 17
+    options.release = 21
 }
 
 tasks.named('jar', Jar).configure {

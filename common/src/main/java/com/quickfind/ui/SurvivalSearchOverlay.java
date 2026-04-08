@@ -4,6 +4,7 @@ import com.quickfind.QuickFindCommon;
 import com.quickfind.search.SearchMatcher;
 import com.quickfind.search.SearchQuery;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -11,7 +12,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
@@ -72,7 +73,7 @@ public final class SurvivalSearchOverlay {
             int x = leftPos + slot.x;
             int y = topPos + slot.y;
             if (matches(slot.getItem(), text, searchQuery)) {
-                AbstractContainerScreen.renderSlotHighlight(guiGraphics, x, y, 0x80FFFFFF);
+                guiGraphics.fill(x, y, x + 16, y + 16, 0x40FFFFFF);
             } else {
                 guiGraphics.fill(x, y, x + 16, y + 16, 0xA0000000);
             }
@@ -80,7 +81,7 @@ public final class SurvivalSearchOverlay {
     }
 
     public boolean keyPressed(int key) {
-        return this.visible && this.searchField != null && this.searchField.isFocused() && this.searchField.keyPressed(key, 0, 0);
+        return this.visible && this.searchField != null && this.searchField.isFocused() && this.searchField.keyPressed(new KeyEvent(key, 0, 0));
     }
 
     public boolean isVisibleOn(Screen screen) {
@@ -104,11 +105,11 @@ public final class SurvivalSearchOverlay {
 
         screen.setFocused(this.searchField);
         this.searchField.setFocused(true);
-        this.searchField.moveCursorToEnd();
+        this.searchField.moveCursorToEnd(false);
     }
 
     private static boolean matches(ItemStack stack, String text, SearchQuery searchQuery) {
-        ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(stack.getItem());
+        Identifier itemId = BuiltInRegistries.ITEM.getKey(stack.getItem());
         String namespace = itemId == null ? "" : itemId.getNamespace();
         String itemName = stack.getHoverName().getString();
 
