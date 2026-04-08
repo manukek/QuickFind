@@ -1,6 +1,6 @@
 ![QuickFindLogo](https://cdn.modrinth.com/data/cached_images/5f10b06cd46a3e12390215402797745c78da80a5_0.webp)
 
-## [Modrinth](https://modrinth.com/project/quickfind) | [GitHub](https://github.com/manukek/quickfind) | [Issues](https://github.com/manukek/quickfind/issues)
+## [Modrinth](https://modrinth.com/project/quickfind) | [CurseForge](https://curseforge.com/minecraft/mc-mods/quickfind/) | [GitHub](https://github.com/manukek/quickfind) | [Issues](https://github.com/manukek/quickfind/issues)
 
 # QuickFind
 
