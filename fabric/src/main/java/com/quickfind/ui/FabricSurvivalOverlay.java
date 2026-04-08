@@ -18,10 +18,10 @@ public final class FabricSurvivalOverlay {
             SurvivalSearchOverlay overlay = QuickFindCommon.getSurvivalSearchOverlay();
             overlay.init(screen);
             if (overlay.searchField != null) {
-                Screens.getButtons(screen).add(overlay.searchField);
+                Screens.getWidgets(screen).add(overlay.searchField);
             }
 
-            ScreenEvents.afterRender(screen).register((currentScreen, guiGraphics, mouseX, mouseY, tickDelta) -> {
+            ScreenEvents.afterExtract(screen).register((currentScreen, guiGraphics, mouseX, mouseY, tickDelta) -> {
                 if (overlay.isVisibleOn(currentScreen)) {
                     overlay.render(guiGraphics);
                 }
