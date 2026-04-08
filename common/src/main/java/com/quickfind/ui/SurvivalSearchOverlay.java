@@ -49,10 +49,17 @@ public final class SurvivalSearchOverlay {
         this.searchField.setResponder(this::onQueryChanged);
         this.searchField.setVisible(true);
         this.searchField.setValue(QuickFindCommon.getLastQuery());
+        this.updateLayout();
     }
 
     public void render(GuiGraphicsExtractor guiGraphics) {
-        if (!this.visible || this.searchField == null || this.searchField.getValue().isBlank()) {
+        if (!this.visible || this.searchField == null) {
+            return;
+        }
+
+        this.updateLayout();
+
+        if (this.searchField.getValue().isBlank()) {
             return;
         }
 
@@ -83,7 +90,13 @@ public final class SurvivalSearchOverlay {
     }
 
     public void render(Object guiGraphics) {
-        if (!this.visible || this.searchField == null || this.searchField.getValue().isBlank()) {
+        if (!this.visible || this.searchField == null) {
+            return;
+        }
+
+        this.updateLayout();
+
+        if (this.searchField.getValue().isBlank()) {
             return;
         }
 
@@ -160,6 +173,7 @@ public final class SurvivalSearchOverlay {
             return;
         }
 
+        this.updateLayout();
         screen.setFocused(this.searchField);
         this.searchField.setFocused(true);
         this.searchField.moveCursorToEnd(false);
@@ -213,6 +227,28 @@ public final class SurvivalSearchOverlay {
                 dropdownWidth,
                 modId -> this.searchField.setValue("@" + modId + ":")
         ));
+    }
+
+    private void updateLayout() {
+        if (this.searchField == null || this.screen == null) {
+            return;
+        }
+
+        int imageWidth = getFieldValue(this.screen, "imageWidth", DEFAULT_IMAGE_WIDTH);
+        int imageHeight = getFieldValue(this.screen, "imageHeight", DEFAULT_IMAGE_HEIGHT);
+        int leftPos = getFieldValue(this.screen, "leftPos", (this.screen.width - imageWidth) / 2);
+        int topPos = getFieldValue(this.screen, "topPos", (this.screen.height - imageHeight) / 2);
+        int y = Math.max(4, topPos - FIELD_HEIGHT - FIELD_MARGIN);
+
+        boolean changed = this.searchField.getX() != leftPos || this.searchField.getY() != y || this.searchField.getWidth() != imageWidth;
+        if (!changed) {
+            return;
+        }
+
+        this.searchField.setX(leftPos);
+        this.searchField.setY(y);
+        this.searchField.setWidth(imageWidth);
+        this.updateSuggestions(this.searchField.getValue());
     }
 
     private static boolean matches(ItemStack stack, String text, SearchQuery searchQuery) {
