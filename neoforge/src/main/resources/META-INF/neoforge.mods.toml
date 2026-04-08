@@ -8,7 +8,7 @@ version = "${version}"
 displayName = "QuickFind"
 displayTest = "IGNORE_SERVER_VERSION"
 description = '''
-Lightweight vanilla inventory search improvements.
+Lightweight vanilla inventory search improvements. [Modrinth](https://modrinth.com/project/quickfind) | [GitHub](https://github.com/manukek/quickfind) | [Issues](https://github.com/manukek/quickfind/issues)
 '''
 
 [[dependencies.quickfind]]
