@@ -1,6 +1,7 @@
 package com.quickfind.ui;
 
 import com.quickfind.QuickFindCommon;
+import com.quickfind.search.ModResolver;
 import com.quickfind.search.SearchMatcher;
 import com.quickfind.search.SearchQuery;
 import net.minecraft.client.Minecraft;
@@ -16,6 +17,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 import java.lang.reflect.Field;
+import java.util.List;
 
 public final class SurvivalSearchOverlay {
     private static final int DEFAULT_IMAGE_WIDTH = 176;
@@ -43,7 +45,7 @@ public final class SurvivalSearchOverlay {
         this.searchField = new EditBox(Minecraft.getInstance().font, leftPos, y, imageWidth, FIELD_HEIGHT, Component.literal("QuickFind"));
         this.searchField.setBordered(true);
         this.searchField.setMaxLength(128);
-        this.searchField.setResponder(QuickFindCommon::setLastQuery);
+        this.searchField.setResponder(this::onQueryChanged);
         this.searchField.setVisible(true);
         this.searchField.setValue(QuickFindCommon.getLastQuery());
     }
@@ -80,7 +82,30 @@ public final class SurvivalSearchOverlay {
     }
 
     public boolean keyPressed(int key) {
-        return this.visible && this.searchField != null && this.searchField.isFocused() && this.searchField.keyPressed(key, 0, 0);
+        if (!this.visible || this.searchField == null || !this.searchField.isFocused()) {
+            return false;
+        }
+
+        ModSuggestionWidget widget = QuickFindCommon.getModSuggestionWidget();
+        if (widget != null && !widget.isVisibleOn(this.screen)) {
+            QuickFindCommon.setModSuggestionWidget(null);
+            widget = null;
+        }
+
+        if (widget != null && widget.keyPressed(key)) {
+            return true;
+        }
+
+        return this.searchField.keyPressed(key, 0, 0) || key != 256;
+    }
+
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        ModSuggestionWidget widget = QuickFindCommon.getModSuggestionWidget();
+        if (widget != null && !widget.isVisibleOn(this.screen)) {
+            QuickFindCommon.setModSuggestionWidget(null);
+            widget = null;
+        }
+        return widget != null && widget.mouseClicked(mouseX, mouseY, button);
     }
 
     public boolean isVisibleOn(Screen screen) {
@@ -95,6 +120,7 @@ public final class SurvivalSearchOverlay {
         this.searchField = null;
         this.screen = null;
         this.visible = false;
+        QuickFindCommon.setModSuggestionWidget(null);
     }
 
     public void focus(Screen screen) {
@@ -105,6 +131,56 @@ public final class SurvivalSearchOverlay {
         screen.setFocused(this.searchField);
         this.searchField.setFocused(true);
         this.searchField.moveCursorToEnd(false);
+        this.updateSuggestions(this.searchField.getValue());
+    }
+
+    private void onQueryChanged(String text) {
+        QuickFindCommon.setLastQuery(text);
+        this.updateSuggestions(text);
+    }
+
+    private void updateSuggestions(String text) {
+        if (this.searchField == null || this.screen == null) {
+            QuickFindCommon.setModSuggestionWidget(null);
+            return;
+        }
+
+        SearchQuery searchQuery = SearchQuery.parse(text);
+        if (searchQuery.type != SearchQuery.QueryType.MOD) {
+            QuickFindCommon.setModSuggestionWidget(null);
+            return;
+        }
+
+        ModResolver modResolver = QuickFindCommon.getModResolver();
+        if (modResolver == null) {
+            QuickFindCommon.setModSuggestionWidget(null);
+            return;
+        }
+
+        List<String> suggestions = modResolver.suggest(searchQuery.modId);
+        if (suggestions.isEmpty()) {
+            QuickFindCommon.setModSuggestionWidget(null);
+            return;
+        }
+
+        int dropdownWidth = Math.max(this.searchField.getWidth(), suggestions.stream()
+                .mapToInt(modId -> Minecraft.getInstance().font.width(modId) + 8)
+                .max()
+                .orElse(this.searchField.getWidth()));
+        int dropdownX = this.searchField.getX() + this.searchField.getWidth() + 4;
+        if (dropdownX + dropdownWidth > this.screen.width - 4) {
+            dropdownX = Math.max(4, this.searchField.getX() - dropdownWidth - 4);
+        }
+
+        QuickFindCommon.setModSuggestionWidget(new ModSuggestionWidget(
+                suggestions,
+                this.screen,
+                this.searchField,
+                dropdownX,
+                this.searchField.getY(),
+                dropdownWidth,
+                modId -> this.searchField.setValue("@" + modId + ":")
+        ));
     }
 
     private static boolean matches(ItemStack stack, String text, SearchQuery searchQuery) {
