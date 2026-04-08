@@ -1,7 +1,7 @@
 package com.quickfind.ui;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 
@@ -37,13 +37,10 @@ public final class ModSuggestionWidget {
         return !this.suggestions.isEmpty() && this.owner == screen && this.anchor.isVisible() && this.anchor.isFocused();
     }
 
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+    public void render(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
         if (this.suggestions.isEmpty()) {
             return;
         }
-
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate(0.0F, 0.0F, 400.0F);
 
         int height = this.getHeight();
         guiGraphics.fill(this.x, this.y, this.x + this.width, this.y + height, 0xE0101010);
@@ -54,10 +51,14 @@ public final class ModSuggestionWidget {
             if (i == this.selectedIndex || i == hoveredIndex) {
                 guiGraphics.fill(this.x + 1, rowTop, this.x + this.width - 1, rowTop + ROW_HEIGHT, 0x80406080);
             }
-            guiGraphics.drawString(Minecraft.getInstance().font, this.suggestions.get(i), this.x + 4, rowTop + 2, 0xFFFFFF);
         }
 
-        guiGraphics.pose().popPose();
+        guiGraphics.nextStratum();
+
+        for (int i = 0; i < this.suggestions.size(); i++) {
+            int rowTop = this.y + PADDING + i * ROW_HEIGHT;
+            guiGraphics.text(Minecraft.getInstance().font, this.suggestions.get(i), this.x + 4, rowTop + 2, 0xFFFFFFFF);
+        }
     }
 
     public boolean keyPressed(int key) {

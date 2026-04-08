@@ -3,15 +3,13 @@ package com.quickfind;
 import com.quickfind.ui.NeoForgeKeyBindings;
 import com.quickfind.ui.NeoForgeSuggestionRenderer;
 import com.quickfind.ui.NeoForgeSurvivalOverlay;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.common.Mod;
 
 @Mod(QuickFindCommon.MOD_ID)
 public final class QuickFindNeoForge {
-    public QuickFindNeoForge() {
+    public QuickFindNeoForge(IEventBus modEventBus) {
         QuickFindCommon.init();
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         try {
             Class.forName("net.minecraft.client.Minecraft");
             NeoForgeKeyBindings.register(modEventBus);
