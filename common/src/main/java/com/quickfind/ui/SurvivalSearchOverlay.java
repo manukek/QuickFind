@@ -36,10 +36,10 @@ public final class SurvivalSearchOverlay {
             return;
         }
 
-        int imageWidth = getFieldValue(screen, "imageWidth", DEFAULT_IMAGE_WIDTH);
-        int imageHeight = getFieldValue(screen, "imageHeight", DEFAULT_IMAGE_HEIGHT);
-        int leftPos = getFieldValue(screen, "leftPos", (screen.width - imageWidth) / 2);
-        int topPos = getFieldValue(screen, "topPos", (screen.height - imageHeight) / 2);
+        int imageWidth = getImageWidth(screen);
+        int imageHeight = getImageHeight(screen);
+        int leftPos = getLeftPos(screen, imageWidth);
+        int topPos = getTopPos(screen, imageHeight);
         int y = Math.max(4, topPos - FIELD_HEIGHT - FIELD_MARGIN);
 
         this.searchField = new EditBox(Minecraft.getInstance().font, leftPos, y, imageWidth, FIELD_HEIGHT, Component.literal("QuickFind"));
@@ -68,10 +68,10 @@ public final class SurvivalSearchOverlay {
 
         String text = this.searchField.getValue();
         SearchQuery searchQuery = SearchQuery.parse(text);
-        int imageWidth = getFieldValue(this.screen, "imageWidth", DEFAULT_IMAGE_WIDTH);
-        int imageHeight = getFieldValue(this.screen, "imageHeight", DEFAULT_IMAGE_HEIGHT);
-        int leftPos = getFieldValue(this.screen, "leftPos", (this.screen.width - imageWidth) / 2);
-        int topPos = getFieldValue(this.screen, "topPos", (this.screen.height - imageHeight) / 2);
+        int imageWidth = getImageWidth(this.screen);
+        int imageHeight = getImageHeight(this.screen);
+        int leftPos = getLeftPos(this.screen, imageWidth);
+        int topPos = getTopPos(this.screen, imageHeight);
 
         for (Slot slot : containerScreen.getMenu().slots) {
             if (!slot.hasItem()) {
@@ -142,6 +142,14 @@ public final class SurvivalSearchOverlay {
         this.updateSuggestions(this.searchField.getValue());
     }
 
+    public void refreshLayout(Screen screen) {
+        if (!this.isVisibleOn(screen)) {
+            return;
+        }
+
+        this.updateLayout();
+    }
+
     private void onQueryChanged(String text) {
         QuickFindCommon.setLastQuery(text);
         this.updateSuggestions(text);
@@ -196,10 +204,10 @@ public final class SurvivalSearchOverlay {
             return;
         }
 
-        int imageWidth = getFieldValue(this.screen, "imageWidth", DEFAULT_IMAGE_WIDTH);
-        int imageHeight = getFieldValue(this.screen, "imageHeight", DEFAULT_IMAGE_HEIGHT);
-        int leftPos = getFieldValue(this.screen, "leftPos", (this.screen.width - imageWidth) / 2);
-        int topPos = getFieldValue(this.screen, "topPos", (this.screen.height - imageHeight) / 2);
+        int imageWidth = getImageWidth(this.screen);
+        int imageHeight = getImageHeight(this.screen);
+        int leftPos = getLeftPos(this.screen, imageWidth);
+        int topPos = getTopPos(this.screen, imageHeight);
         int y = Math.max(4, topPos - FIELD_HEIGHT - FIELD_MARGIN);
 
         boolean changed = this.searchField.getX() != leftPos || this.searchField.getY() != y || this.searchField.getWidth() != imageWidth;
@@ -243,5 +251,33 @@ public final class SurvivalSearchOverlay {
             }
         }
         return fallback;
+    }
+
+    private static int getImageWidth(Screen screen) {
+        if (screen instanceof QuickFindContainerScreenAccess access) {
+            return access.quickfind$getImageWidth();
+        }
+        return getFieldValue(screen, "imageWidth", DEFAULT_IMAGE_WIDTH);
+    }
+
+    private static int getImageHeight(Screen screen) {
+        if (screen instanceof QuickFindContainerScreenAccess access) {
+            return access.quickfind$getImageHeight();
+        }
+        return getFieldValue(screen, "imageHeight", DEFAULT_IMAGE_HEIGHT);
+    }
+
+    private static int getLeftPos(Screen screen, int imageWidth) {
+        if (screen instanceof QuickFindContainerScreenAccess access) {
+            return access.quickfind$getLeftPos();
+        }
+        return getFieldValue(screen, "leftPos", (screen.width - imageWidth) / 2);
+    }
+
+    private static int getTopPos(Screen screen, int imageHeight) {
+        if (screen instanceof QuickFindContainerScreenAccess access) {
+            return access.quickfind$getTopPos();
+        }
+        return getFieldValue(screen, "topPos", (screen.height - imageHeight) / 2);
     }
 }
